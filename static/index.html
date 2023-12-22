@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noise Threshold Shader</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="main">
+    <div class="title">Noise Threshold Shader</div>
+    <label class="load-block__file">
+        <input id="loader" type="file">
+        UPLOAD
+    </label>
+
+    <button id="patternBtn">Pattern</button>
+    <div class="patterns" style="display: none;">
+        <label class="load-block__file">
+            <input id="loadPattern" type="file">
+            Load pattern
+        </label>
+        <div>
+            <span>Presets: </span>
+            <select id="patternPresets"></select>
+        </div>
+        <br>
+        <canvas id="patternCnv"></canvas>
+        <div class="fl">
+            <div class="patternResize">
+                <span>Size: </span>
+                <button>-</button><button>+</button>
+            </div>
+            <br>
+            <input type="color" id="patternColor">
+        </div>
+        <div>
+            <div>PPD: </div>
+            <div class="inner">2</div>
+            <input id="patternPPD" type="range" min="0" max="100" step="2" value="2">
+        </div>
+        <br>
+        <button id="setPattern">Set pattern</button>
+        <button id="clearP">Clear</button>
+        <button id="drwImg">Draw image</button>
+    </div>
+    <div><br></div>
+    <div class="resizing">
+        <span>Main size: </span>
+        <button>-</button><button>+</button>
+    </div>
+    <button id="canvasResize" style="margin-bottom: 10px;">Disable</button>
+    <div class="canvas-resize">
+        <div>Canvas Size: </div>
+        <div class="inner">0</div>
+        <input type="range" min="1" max="100" step="1" value="0">
+    </div>
+    <div class="render-block" style="display: block">
+        <canvas id="cnv"></canvas>
+        <video id="raw-video" controls="true" src="'" loop="true" width="480" height="270" crossorigin="anonymous"
+            muted="true"></video>
+    </div>
+    <div id="navigator">
+        <button id="play-pause">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 19V5L19 12L8 19Z" fill="#B4B4B4" />
+            </svg>
+        </button>
+        <input type="range" id="timeline" min="0" max="0" step="0.1" value="0">
+
+        <div class="vol">
+            <button id="vol__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M19.7999 22.6L16.7749 19.5751C16.3582 19.8417 15.9166 20.0711 15.4499 20.2631C14.9832 20.4544 14.4999 20.6084 13.9999 20.725V18.675C14.2332 18.5917 14.4626 18.5084 14.6879 18.425C14.9126 18.3417 15.1249 18.2417 15.3249 18.125L11.9999 14.8V20L6.9999 15H2.9999V9.00005H6.1999L1.3999 4.20005L2.7999 2.80005L21.1999 21.2001L19.7999 22.6ZM19.5999 16.8L18.1499 15.35C18.4332 14.8334 18.6459 14.2917 18.7879 13.725C18.9292 13.1584 18.9999 12.575 18.9999 11.975C18.9999 10.4084 18.5416 9.00838 17.6249 7.77505C16.7082 6.54172 15.4999 5.70838 13.9999 5.27505V3.22505C16.0666 3.69172 17.7499 4.73738 19.0499 6.36205C20.3499 7.98738 20.9999 9.85838 20.9999 11.975C20.9999 12.8584 20.8792 13.7084 20.6379 14.525C20.3959 15.3417 20.0499 16.1 19.5999 16.8ZM16.2499 13.45L13.9999 11.2V7.95005C14.7832 8.31672 15.3959 8.86672 15.8379 9.60005C16.2792 10.3334 16.4999 11.1334 16.4999 12C16.4999 12.25 16.4792 12.496 16.4379 12.738C16.3959 12.9794 16.3332 13.2167 16.2499 13.45ZM11.9999 9.20005L9.3999 6.60005L11.9999 4.00005V9.20005Z"
+                        fill="#B4B4B4" /></svg></button>
+            <div class="vol_wrap"><input type="range" id="volume" min="0" max="1" step="0.05" value="1"></div>
+        </div>
+    </div>
+    <div id="canvas-nav">
+        <div class="inp" style="display: flex;">
+            <button id="show-original">show original</button>
+            <button id="rotate">rotate</button>
+        </div>
+        <div class="inp">
+            <div class="inp_d">
+                <div class="inp_p">
+                    <div>Noise opacity: </div>
+                    <div class="inner">0.2</div>
+                    <input type="range" min="0" max="1" step="0.01" value="0.2">
+                </div>
+                <div class="inp_p">
+                    <div>Noise size: </div>
+                    <div class="inner">2.4</div>
+                    <input type="range" min="0" max="10" step="0.1" value="2.4">
+                </div>
+                <div class="inp_p">
+                    <div>Noise Perc: </div>
+                    <div class="inner">98</div>
+                    <input type="range" min="0" max="100" step="1" value="98">
+                </div>
+                <div class="inp_p">
+                    <div>Bright: </div>
+                    <div class="inner">0</div>
+                    <input type="range" min="-100" max="100" value="0">
+                </div>
+                <div class="inp_p">
+                    <div>Contrast: </div>
+                    <div class="inner">-5</div>
+                    <input type="range" min="-100" max="100" value="-5">
+                </div>
+                <div class="inp_p">
+                    <div>Half: </div>
+                    <div class="inner">34</div>
+                    <input type="range" min="0" max="255" value="34">
+                </div>
+                <div class="inp_p">
+                    <div>Chaotic: </div>
+                    <div class="inner">17.68</div>
+                    <input type="range" min="0" max="50" step="0.01" value="17.68">
+                </div>
+            </div>
+            <div class="inp_d">
+                <div class="inp_p">
+                    <div>Pattern size: </div>
+                    <div class="inner">0.06</div>
+                    <input type="range" min="0" max="5" step="0.01" value="0.06">
+                </div>
+                <div class="inp_p">
+                    <div>Pattern opacity: </div>
+                    <div class="inner">0.15</div>
+                    <input type="range" min="0" max="1" step="0.01" value="0.15">
+                </div>
+            </div>
+            <div class="inp_p">
+                <div>Frame per Sec: </div>
+                <div class="inner">24</div>
+                <input type="range" min="1" max="60" step="1" value="24">
+            </div>
+            <div class="inp_p">
+                <div>Render Frame: </div>
+                <div class="inner">0</div>
+                <input id="renderTime" type="range" min="0" max="0" step="1" value="0">
+            </div>
+            <div class="inp_p">
+                <div>Start loop: </div>
+                <div class="inner">0</div>
+                <input id="startLoop" type="range" min="0" max="0" step="1" value="0">
+            </div>
+            <div class="inp_p">
+                <div>End loop: </div>
+                <div class="inner">0</div>
+                <input id="endLoop" type="range" min="0" max="0" step="1" value="0">
+            </div>
+            <div class="fl">
+                <button id="autodraw">Autodraw</button>
+                <button id="noise">Noise</button>
+                <button id="colored">Monochrome</button>
+                <button id="createData">Create Data</button>
+                <button id="playData">Play Data</button>
+                <button id="clearData">Clear Data</button>
+                <button id="loopRender">Loop</button>
+                <button id="downloadData">Download Loop</button>
+                <button id="download">Download Screen</button>
+            </div>
+            <div class="fl">
+                <button id="recRec">Record</button>
+                <button id="recStop">Stop</button>
+                <button id="recClear">Clear</button>
+                <button id="recSave">Save</button>
+                <button id="recSound">Sound On</button>
+            </div>
+            <br>
+            <div class="color">
+                <div>Colors:</div>
+                <input type="color" value="#0a0a0a">
+                <input type="color" value="#c8c8c8">
+            </div>
+            <div class="color-presets">
+                <div>Colors presets: </div>
+                <div class="color-grid"></div>
+            </div>
+        </div>
+
+        <div class="render_v">
+            
+        </div>
+
+        <script type="module" src="/js/Main.js"></script>
+    </div>
+</div>
+
+</body>
+</html>
