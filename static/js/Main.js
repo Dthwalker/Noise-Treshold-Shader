@@ -19,6 +19,8 @@ class Main {
         this.renderTime = document.querySelector('#renderTime');
         this.vidStart   = null;
         this.renderI    = 0;
+        this.dir        = true;
+        this.mirror     = false;
         this.autodraw   = false;
         this.icons      = {
             play  : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 19V5L19 12L8 19Z" fill="#B4B4B4"/></svg>',
@@ -135,9 +137,17 @@ class Main {
             }
         }
 
+        document.querySelector('#morror').onclick = (e) => {
+            this.mirror = !this.mirror;
+            e.target.style.cssText = !this.mirror? '' : 'background-color: white; color: rgb(10,10,10)';
+            if (!this.mirror) this.dir = true;
+        }
+
         document.querySelector('#clearData').onclick = () => {
             this.canvas.imgData = [];
             this.renderI  = 0;
+            this.canvas.startLoop = 0;
+            this.canvas.endLoop = 0;
             this.renderTime.max = 0;
             document.querySelector('#startLoop').max = 0;
             document.querySelector('#endLoop').max = 0;
@@ -147,7 +157,6 @@ class Main {
         this.renderTime.addEventListener('input', (e) => {
             this.renderI = e.target.value;
             this.canvas.ctx.putImageData(this.canvas.imgData[this.renderI], 0, 0)
-            console.log('set data ' + this.renderI);
         });
 
         document.querySelector('#loopRender').onclick = (e) => {
@@ -228,13 +237,23 @@ class Main {
     }
 
     playRender() {
+        if (this.mirror && (this.renderI > this.canvas.endLoop || this.renderI < this.canvas.startLoop)) {
+            this.renderI = this.canvas.startLoop;
+            this.dir = true;
+        }
         !this.loopRender && this.renderI >= this.canvas.imgData.length ? this.renderI = 0 : null;
         this.canvas.ctx.putImageData(this.canvas.imgData[this.renderI], 0, 0);
         
-        this.renderI++;
+        this.dir ? this.renderI++ : this.renderI--;
 
         if (this.loopRender) {
-            this.renderI > this.canvas.endLoop ? this.renderI = this.canvas.startLoop : null
+            if (this.mirror) {
+                if (this.renderI == this.canvas.endLoop || this.renderI == this.canvas.startLoop) {
+                    this.dir = !this.dir;
+                }
+            } else {
+                this.renderI > this.canvas.endLoop ? this.renderI = this.canvas.startLoop : null
+            }
         } else {
             if (this.renderI >= this.canvas.endLoop) {
                 this.renderI = 0;
@@ -268,8 +287,3 @@ const halftone = new Main(document.getElementById('cnv'),
                                   document.getElementById('navigator'))
 
 halftone.init();
-
-function getColor() {
-    let [v1,v2] = [...document.querySelectorAll('.color input')]
-    console.log(v1.value, v2.value)
-}

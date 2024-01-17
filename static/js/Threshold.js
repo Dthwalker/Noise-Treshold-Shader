@@ -34,6 +34,8 @@ export default class Threshold {
         this.canvasResize = false;
         this.patternSize  = 0.06;
         this.patternOp    = 0.15;
+        this.addPattern   = false;
+        this.noiseCount   = 5;
     }
 
     get pattern() { return Pattern.data }
@@ -71,13 +73,13 @@ export default class Threshold {
     addNoise() {
         this.ctx.globalAlpha = this.opacity;
 
-        for (let y = 0; y < this.h; y+=5) {
-            for (let x = 0; x < this.w; x+=5) {
+        for (let y = 0; y < this.h; y+=this.noiseCount) {
+            for (let x = 0; x < this.w; x+=this.noiseCount) {
                 this.ctx.fillStyle = random(0,100) < this.noisePers ? 'rgba(0,0,0)' : 'rgba(255,255,255)';
-                let size = random(0,this.size);
-                this.ctx.fillRect(x + random(0,this.chaotic), y + random(0,this.chaotic), size, size);
-                this.ctx.fillRect(x + random(0,this.chaotic), y + random(0,this.chaotic), size, size);
-                this.ctx.fillRect(x + random(0,this.chaotic), y + random(0,this.chaotic), size, size);
+                this.ctx.fillRect(x + random(-this.chaotic,this.chaotic),
+                                  y + random(-this.chaotic,this.chaotic),
+                                  random(0,this.size),
+                                  random(0,this.size));
             }
         }
         this.ctx.globalAlpha = 1;
@@ -141,7 +143,7 @@ export default class Threshold {
         this.ctx.drawImage(type == 'video' ? this.video : this.img, 0, 0, this.w, this.h);
 
         if (this.noise) this.addNoise();
-        this.drawPattern()
+        if (this.addPattern) this.drawPattern();
         this.data = this.ctx.getImageData(0, 0, this.w, this.h);
 
         this.pushPixels();
@@ -185,6 +187,10 @@ export default class Threshold {
             if (this.autodraw()) this.draw(main.renderType);
         }
 
+        document.querySelector('#addPattern').onclick = (e) => {
+            this.addPattern = !this.addPattern;
+            btnClick(e.target, this.addPattern);
+        }
 
         document.querySelector('.canvas-resize input').addEventListener('input', (e) => {
             let val = this.canvasMulti = Number(e.target.value);
@@ -202,19 +208,20 @@ export default class Threshold {
             e.addEventListener('input', el => {
                 let val = Number(el.target.value);
                 el.target.previousElementSibling.innerHTML = val;
-                i == 0  ? this.opacity     = val :
-                i == 1  ? this.size        = val :
-                i == 2  ? this.noisePers   = val :
-                i == 3  ? this.bright      = val :
-                i == 4  ? this.contrast    = val :
-                i == 5  ? this.half        = val :
-                i == 6  ? this.chaotic     = val :
-                i == 7  ? this.patternSize = val :
-                i == 8  ? this.patternOp   = val :
-                i == 9  ? this.frame       = val :
-                i == 10 ? main.renderI     = val :
-                i == 11 ? this.startLoop   = val :
-                i == 12 ? this.endLoop     = val : null
+                i == 0  ? this.noiseCount  = val :
+                i == 1  ? this.opacity     = val :
+                i == 2  ? this.size        = val :
+                i == 3  ? this.noisePers   = val :
+                i == 4  ? this.bright      = val :
+                i == 5  ? this.contrast    = val :
+                i == 6  ? this.half        = val :
+                i == 7  ? this.chaotic     = val :
+                i == 8  ? this.patternSize = val :
+                i == 9  ? this.patternOp   = val :
+                i == 10 ? this.frame       = val :
+                i == 11 ? main.renderI     = val :
+                i == 12 ? this.startLoop   = val :
+                i == 13 ? this.endLoop     = val : null
                 
                 if (this.autodraw()) this.draw(main.renderType);
                 if(i == 10) {
@@ -281,7 +288,7 @@ export default class Threshold {
             ['#7755ab', '#f2a0d3'],['#131115', '#cd85c6'],
             ['#1d1730', '#f5a238'],['#191919', '#88083b'],
             ['#221d1a', '#f5b607'],['#262626', '#908b0d'],
-            ['#2c2c2c', '#747671'],['#2b2d2c', '#d7d4cc'],
+            ['#1f1e1e', '#5ef3ce'],['#2b2d2c', '#d7d4cc'],
         ], main);
     }
 

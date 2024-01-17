@@ -77,7 +77,7 @@ function createGif(w,h,path) {
     encoder.finish();
 }
 
+let port = 3000;
+app.listen(port);
 
-app.listen(3000);
-
-console.log('Server is start');
+console.log(`The server is opened at: http://127.0.0.1:${port}/`);

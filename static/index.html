@@ -27,7 +27,6 @@
             <select id="patternPresets"></select>
         </div>
         <br>
-        <canvas id="patternCnv"></canvas>
         <div class="fl">
             <div class="patternResize">
                 <span>Size: </span>
@@ -36,6 +35,8 @@
             <br>
             <input type="color" id="patternColor">
         </div>
+        <br>
+        <canvas id="patternCnv"></canvas>
         <div>
             <div>PPD: </div>
             <div class="inner">2</div>
@@ -87,6 +88,11 @@
         <div class="inp">
             <div class="inp_d">
                 <div class="inp_p">
+                    <div>Noise Count: </div>
+                    <div class="inner">5</div>
+                    <input type="range" min="1" max="100" step="1" value="5">
+                </div>
+                <div class="inp_p">
                     <div>Noise opacity: </div>
                     <div class="inner">0.2</div>
                     <input type="range" min="0" max="1" step="0.01" value="0.2">
@@ -101,6 +107,8 @@
                     <div class="inner">98</div>
                     <input type="range" min="0" max="100" step="1" value="98">
                 </div>
+            </div>
+            <div class="inp_d">
                 <div class="inp_p">
                     <div>Bright: </div>
                     <div class="inner">0</div>
@@ -157,11 +165,13 @@
             <div class="fl">
                 <button id="autodraw">Autodraw</button>
                 <button id="noise">Noise</button>
+                <button id="addPattern">Patterns</button>
                 <button id="colored">Monochrome</button>
                 <button id="createData">Create Data</button>
                 <button id="playData">Play Data</button>
                 <button id="clearData">Clear Data</button>
                 <button id="loopRender">Loop</button>
+                <button id="morror">Mirror</button>
                 <button id="downloadData">Download Loop</button>
                 <button id="download">Download Screen</button>
             </div>
